@@ -1,10 +1,3 @@
-![Logo du projet](cloud.png)
-
-
-![Logo du projet](architecture-projet.jpeg)
-
-
-
 # ☁️ VidP : Pipeline Hybride de Traitement Vidéo
 
 ### **Groupe 8 - Architecture Cloud & Edge**
