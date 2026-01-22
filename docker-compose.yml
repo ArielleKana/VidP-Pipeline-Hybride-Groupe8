@@ -1,0 +1,77 @@
+version: "3.8"
+
+services:
+  # --- 1. LE SITE WEB (INTERFACE) ---
+  website:
+    build: ./webapp
+    container_name: video-website
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data:/project/data
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+
+  # --- 2. DOWNSCALE ---
+  dowscale:
+    build: .
+    container_name: video-dowscale
+    volumes:
+      - ./app:/project/app
+      - ./videos:/project/videos
+      - ./data:/project/data
+    command: python app/dowscale.py
+
+  # --- 3. DETECTION DE LANGUE ---
+  detectlang:
+    build: .
+    container_name: video-detectlang
+    volumes:
+      - ./app:/project/app
+      - ./videos:/project/videos
+      - ./data:/project/data
+    depends_on:
+      - dowscale
+    command: python app/detectlang.py
+
+  # --- 4. SOUS-TITRES ---
+  subtitles:
+    build: .
+    container_name: video-subtitles
+    volumes:
+      - ./app:/project/app
+      - ./videos:/project/videos
+      - ./data:/project/data
+    depends_on:
+      - detectlang
+    command: python app/subtitles.py
+
+  # --- 5. DETECTION ANIMAUX ---
+  animaldetect:
+    build: .
+    container_name: video-animaldetect
+    volumes:
+      - ./app:/project/app
+      - ./data:/project/data
+    depends_on:
+      - subtitles
+    command: python app/animal_detect.py
+
+  # --- 6. TRANSFERT DES DONNÉES (CORRIGÉ) ---
+  transfertdata:
+    build: .
+    container_name: video-transfertdata
+    volumes:
+      # IMPORTANT : On monte le code pour que le conteneur trouve le script
+      - ./app:/project/app  
+      - ./data:/project/data
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - PYTHONUNBUFFERED=1  # Force l'affichage des logs en temps réel
+    depends_on:
+      - animaldetect
+    command: python app/transfertData.py

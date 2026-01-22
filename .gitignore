@@ -1,0 +1,10 @@
+# Données locales (Vidéos et résultats)
+data/
+__pycache__/
+*.wav
+*.tmp.mp4
+*.srt
+
+# Environnement et Clés
+.env
+.aws/
