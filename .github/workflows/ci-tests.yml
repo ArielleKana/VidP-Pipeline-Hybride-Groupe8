@@ -27,3 +27,10 @@ jobs:
         pip install flake8
         # Verifie si le code contient des erreurs fatales
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
+    - name: Run SLA Tooling test
+      run: |
+        # On lance l'app en arrière-plan pour la tester
+        python webapp/app.py & 
+        sleep 5 # On attend qu'elle démarre
+        python sla_tooling.py
