@@ -36,24 +36,60 @@ Le pipeline est orchestré par Docker Compose et comprend les modules suivants :
 2. Lancer le pipeline avec la commande :
 `docker-compose up -d --build`
 3. Les résultats sont générés dans le dossier partagé `/data`.
+C'est très juste. Il est crucial de séparer visuellement ce qu'on **lit** (l'explication) de ce qu'on **copie** (la commande). Cela évite les erreurs de manipulation pendant la présentation.
+
+Voici la section corrigée avec un formatage strict :
+
+---
 
 ### Partie 2 : Accès au Dashboard (Cloud sur AWS)
 
-Pour administrer le serveur à distance, nous utilisons le protocole SSH.
+Pour administrer le serveur à distance, nous utilisons le protocole **SSH**. Voici les étapes détaillées :
 
-1. **Préparer la clé de sécurité** :
-Le fichier `notreprojet.pem` est votre "clé numérique" privée. Sans elle, l'accès au serveur est impossible. Avant de l'utiliser, il faut limiter ses droits pour que le système l'accepte :
-`chmod 400 notreprojet.pem`
-2. **Se connecter au serveur (SSH)** :
-Utilisez la commande suivante en remplaçant `<IP_INSTANCE_EC2>` par l'adresse IP publique de votre serveur (ex: 54.12.34.56) :
-`ssh -i "notreprojet.pem" ubuntu@<IP_INSTANCE_EC2>`
-*Note : `ubuntu` est l'identifiant par défaut de la machine, et `-i` indique au terminal d'utiliser votre fichier de clé pour s'identifier.*
-3. **Lancer le site web sur le serveur** :
-Une fois connecté, entrez dans le dossier du projet et démarrez le conteneur :
-`cd ~/VidP-Pipeline-Hybride-Groupe8`
-`docker-compose up -d --build website`
-4. **Consulter les résultats** :
-Ouvrez votre navigateur et tapez l'adresse IP du serveur suivie du port 5000 (ex: `http://54.12.34.56:5000`).
+#### 1. Préparer la clé de sécurité
+
+Le fichier `notreprojet.pem` est votre "clé numérique" privée. Sans elle, l'accès au serveur est impossible. Le système exige que cette clé soit protégée et non lisible par d'autres utilisateurs pour être acceptée.
+
+**Commande à exécuter :**
+
+```bash
+chmod 400 notreprojet.pem
+
+```
+
+#### 2. Se connecter au serveur (SSH)
+
+Cette commande vous permet d'entrer dans la console de la machine distante. Vous devez remplacer `<IP_INSTANCE_EC2>` par l'adresse IP publique de votre serveur (ex: 54.12.34.56).
+
+**Commande à exécuter :**
+
+```bash
+ssh -i "notreprojet.pem" ubuntu@<IP_INSTANCE_EC2>
+
+```
+
+> **Note :** `ubuntu` est l'identifiant par défaut de la machine AWS. L'option `-i` (identity) indique au terminal d'utiliser votre fichier `.pem` pour prouver votre identité.
+
+#### 3. Lancer le site web sur le serveur
+
+Une fois connecté à la machine AWS, vous devez vous déplacer dans le dossier qui contient le code source et démarrer le service web grâce à Docker.
+
+**Commandes à exécuter :**
+
+```bash
+cd ~/VidP-Pipeline-Hybride-Groupe8
+docker-compose up -d --build website
+
+```
+
+#### 4. Consulter les résultats
+
+Le site web est exposé sur le port **5000**. Pour y accéder, ouvrez votre navigateur web habituel (Chrome, Firefox, etc.).
+
+**Adresse à taper dans votre navigateur :**
+`http://<IP_INSTANCE_EC2>:5000`
+*(Exemple : [http://54.12.34.56:5000](http://54.12.34.56:5000))*
+
 
 ## Équipe - Groupe 8
 
